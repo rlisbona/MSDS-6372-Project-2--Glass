@@ -21,6 +21,10 @@ title1 "Full PCA";
 proc princomp data = glass out=glassPC;
 run;
 
+proc sgscatter data = glass;
+matrix Type RI NA2O MGO AL2O3 SIO2 K2O CAO BAO FE2O3;
+run;
+
 proc print data = glassPC; run;
 
 title1 "PCR using cross validation for component selection";
