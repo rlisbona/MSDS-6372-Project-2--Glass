@@ -11,6 +11,17 @@ proc print data = glass; run;
 *Variable list;
 *Obs ID RI NA2O MGO AL2O3 SIO2 K2O CAO BAO FE2O3 TYPE ;
 
+
+proc sgscatter data = glass;
+matrix Type RI NA2O MGO AL2O3 SIO2 K2O CAO BAO FE2O3;
+run;
+
+proc boxplot data = glass;
+plot  (RI NA2O MGO AL2O3 SIO2 K2O CAO BAO FE2O3) * type /
+	boxstyle = schematic
+	horizontal;
+run;
+
 title1 "Means by Glass Type";
 proc means data = glass;
 class Type;
@@ -19,11 +30,12 @@ run;
 
 title1 "Full PCA";
 proc princomp data = glass out=glassPC;
+var TYPE RI NA2O MGO AL2O3 SIO2 K2O CAO BAO FE2O3;
 run;
 
-proc sgscatter data = glass;
-matrix Type RI NA2O MGO AL2O3 SIO2 K2O CAO BAO FE2O3;
-run;
+
+
+
 
 proc print data = glassPC; run;
 
