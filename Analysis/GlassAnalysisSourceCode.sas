@@ -45,6 +45,14 @@ var RI NA2O MGO AL2O3 SIO2 K2O CAO BAO FE2O3;
 run;
 ods graphics off;
 
+ods graphics on /width = 6in height = 4in;
+title1 "Full PCA";
+proc princomp data = glass out=glassPC plots = all ;
+var NA2O MGO AL2O3 SIO2 K2O CAO BAO FE2O3;
+*ID type;
+run;
+ods graphics off;
+
 * Note : first 4 account for 80% of variance ;
 * Eigenvalues of the Correlation Matrix: Pick factors with Eigenvalue >=1, Therefor we would pick the first 4 principle components;
 
@@ -98,20 +106,28 @@ run;
 
 
 * Pretty much follows example in BLT 8.5;
-* I think this is picking 8 factors, not really sure; 
+
+*(ALGORITHM=EIG)  Says it goes after the method statement but I couldn't make it work, might give us the eigenvalue chart, not sure;
+
+*Need to figure out how to scale everthing to same scale, might be CENSCALE, I'm not sure right now;
+ods graphics on /width = 6in height = 4in;
 title1 "PCR on RI using cross validation for component selection";
-proc pls data = glass method = pcr cv=one cvtest (stat=press) plots=all;
+proc pls data = glass censcale method = pcr  cv=one cvtest  (stat=press) plots=all;
 model  RI = NA2O MGO AL2O3 SIO2 K2O CAO BAO FE2O3;
 run;
 
 
-* PLS chose 8 components in above step so set nfact=8, but not sure what this means at this point, do we need 8 or 4 from princomp?;
+* Figure out how many factors are used, I havent been able to get an eigenvalue table yet but Percent Variation accounted for table seems to show the same thing;
+* of four factors;
+* just not the eigenvalues;
+* after we pick the number of factors then we use NFACT=XXX to rerun the model with the selected factors;
 title1 "PCR using selected factors";
-proc pls data = glass  method =pcr cv=one cvtest (stat=press) nfact=4 plots=all;
+proc pls data = glass  method =pcr  cv=one cvtest (stat=press) nfact=4 plots=all;
 model RI = NA2O MGO AL2O3 SIO2 K2O CAO BAO FE2O3 /solution;
+output out = glassPLS XSCORE=PRIN YSCORE=RIPLS PRESS;  *This gives us output but I don't see YSCORE or Residuals, XSCORE are the principal components;
 run;
 
-proc print data = glasspls;run;
+proc print data = glassPLS;run;
 
 
 *   STOP HERE     ;
