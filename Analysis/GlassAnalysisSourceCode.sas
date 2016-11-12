@@ -33,6 +33,23 @@ title1 "Scatter plot Chemical composition % weight x RI";
 proc sgscatter data = glass;
 compare y= RI x=( SIO2 NA2O CAO MGO AL2O3 K2O BAO FE2O3)/ reg ellipse = (type=mean) spacing = 4;
 run;
+
+/* Exploratory analysis : Histograms and QQ Plots */ /*---Heidi added*/
+title2 "Histogram and scatter plot Chemical composition % weight and RI";
+proc sgscatter data=glass;
+matrix NA2O--FE2O3 RI type / diagonal=(histogram);
+run;
+
+title3 "Pearson Correlation Coefficients";
+proc corr data=glass nosimple noprob;
+var TYPE RI SIO2 NA2O CAO MGO AL2O3 K2O BAO FE2O3;
+run;
+title4 "Histogram and QQ plot of the RI";
+proc univariate data=glass;
+	var RI;
+	histogram RI; 
+	qqplot RI;
+run;
 ods graphics off;
 
 
